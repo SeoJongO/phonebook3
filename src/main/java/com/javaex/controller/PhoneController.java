@@ -2,6 +2,7 @@ package com.javaex.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,6 +17,13 @@ import com.javaex.vo.PersonVo;
 @Controller
 @RequestMapping(value = "/pb")
 public class PhoneController {
+	
+	//필드
+	@Autowired
+	private PhoneDao phoneDao;
+	//생성자
+	//게터세터
+	//메소드 일반
 
 	@RequestMapping(value = "/test")
 	public String test() {
@@ -39,7 +47,7 @@ public class PhoneController {
 		System.out.println("list");
 
 		// Dao
-		PhoneDao phoneDao = new PhoneDao();
+//		PhoneDao phoneDao = new PhoneDao();
 
 		// Dao method -> data
 		List<PersonVo> personList = phoneDao.getPersonList();
@@ -87,7 +95,7 @@ public class PhoneController {
 		System.out.println(personVo);
 //		System.out.println(name);
 
-		PhoneDao phoneDao = new PhoneDao();
+//		PhoneDao phoneDao = new PhoneDao();
 		phoneDao.personInsert(personVo);
 
 		return "redirect:/pb/list";
@@ -99,7 +107,7 @@ public class PhoneController {
 	public String updateForm(@RequestParam("personId") int id, Model model) {
 		System.out.println("수정폼");
 		
-		PhoneDao phoneDao = new PhoneDao();
+//		PhoneDao phoneDao = new PhoneDao();
 		
 		PersonVo personVo = phoneDao.getPerson(id);
 		
@@ -129,7 +137,7 @@ public class PhoneController {
 	public String update(@ModelAttribute PersonVo personVo, @RequestParam("id") int id) {
 		System.out.println("수정");
 		
-		PhoneDao phoneDao = new PhoneDao();
+//		PhoneDao phoneDao = new PhoneDao();
 		
 		System.out.println(personVo);
 		personVo.setPersonId(id);
@@ -143,7 +151,7 @@ public class PhoneController {
 	public String delete(@RequestParam("personId") int id) {
 		System.out.println("삭제");
 		
-		PhoneDao phoneDao = new PhoneDao();
+//		PhoneDao phoneDao = new PhoneDao();
 		
 		phoneDao.personDelete(id);
 		
