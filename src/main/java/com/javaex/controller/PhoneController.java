@@ -1,12 +1,12 @@
 package com.javaex.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,108 +15,92 @@ import com.javaex.dao.PhoneDao;
 import com.javaex.vo.PersonVo;
 
 @Controller
-@RequestMapping(value = "/pb")
 public class PhoneController {
-	
-	//필드
+
+	// 필드
 	@Autowired
 	private PhoneDao phoneDao;
-	//생성자
-	//게터세터
-	//메소드 일반
+	// 생성자
+	// 게터세터
+	// 메소드 일반
 
-	@RequestMapping(value = "/test")
-	public String test() {
-		System.out.println("test");
-
-		return "/WEB-INF/views/test.jsp";
-		// DispatcherServlet 야 "/WEB-INF/views/test.jsp" 에 포워드 해줘
-	}
-
-	@RequestMapping(value = "/read/{no}", method = { RequestMethod.GET, RequestMethod.POST })
-	public String read(@PathVariable("no") int no) {
-		System.out.println("/read/{" + no + "}");
-
-		return "";
-	}
-
-//	=====================================================================================
-
+	// 리스트
 	@RequestMapping(value = "/list", method = { RequestMethod.GET, RequestMethod.POST })
 	public String list(Model model) {
 		System.out.println("list");
 
-		// Dao
-//		PhoneDao phoneDao = new PhoneDao();
-
-		// Dao method -> data
 		List<PersonVo> personList = phoneDao.getPersonList();
-		System.out.println(personList);
 
 		model.addAttribute("personList", personList);
 
-		return "/WEB-INF/views/list.jsp";
+		return "list";
 	}
 
+	// 등록폼
 	@RequestMapping(value = "/writeForm", method = { RequestMethod.GET, RequestMethod.POST })
 	public String writeForm() {
 		System.out.println("writeForm");
 
-		return "/WEB-INF/views/writeForm.jsp";
+		return "writeForm";
 	}
 
-	/*
-	 * 파라미터가 있을 수도 없을 수도
-	 * 
-	 * @RequestMapping(value="/write", method= {RequestMethod.GET, RequestMethod.POST}) 
-	 * public String write(@RequestParam("name") String name,
-	 * 					   @RequestParam("hp") String hp,
-	 *                     @RequestParam(value="company", required=false, defaultValue="-1") String company) { 
-	 * System.out.println("write"); 
-	 * System.out.println(name);
-	 * System.out.println(hp); 
-	 * System.out.println(company);
-	 * 
-	 * PersonVo personVo = new PersonVo(name, hp, company);
-	 * System.out.println(personVo); // PhoneDao phoneDao = new PhoneDao(); //
-	 * phoneDao.personInsert(personVo);
-	 * 
-	 * return "/WEB-INF/views/list.jsp"; }
-	 */
-
-//	/* 파라미터 알아서 담아줌
+	// 등록
 	@RequestMapping(value = "/write", method = { RequestMethod.GET, RequestMethod.POST })
-	public String write(@ModelAttribute PersonVo personVo /* , @RequestParam("name") String name */) {
+	public String write(@ModelAttribute PersonVo personVo) {
 		System.out.println("write");
 
-		// @ModelAttribute -> new PersonVo()
-		// -> 기본생성자 + setter
-
-		System.out.println(personVo);
-//		System.out.println(name);
-
-//		PhoneDao phoneDao = new PhoneDao();
 		phoneDao.personInsert(personVo);
 
-		return "redirect:/pb/list";
+		return "redirect:/list";
 	}
-//	*/
+	
+	@RequestMapping(value = "/write2", method = { RequestMethod.GET, RequestMethod.POST })
+	public String write2(@RequestParam("name") String name,
+						 @RequestParam("hp") String hp,
+						 @RequestParam("company") String company) {
+		System.out.println("write2");
+		
+		int count = phoneDao.personInsert2(name, hp, company);
+		
+		return "redirect:/list";
+	}
 
-//수정폼
+	// 삭제
+	@RequestMapping(value = "/delete", method = { RequestMethod.GET, RequestMethod.POST })
+	public String delete(@RequestParam("personId") int id) {
+		System.out.println("delete");
+
+		phoneDao.personDelete(id);
+
+		return "redirect:/list";
+
+	}
+
+	// 수정폼
 	@RequestMapping(value = "/updateForm", method = { RequestMethod.GET, RequestMethod.POST })
-	public String updateForm(@RequestParam("personId") int id, Model model) {
-		System.out.println("수정폼");
-		
-//		PhoneDao phoneDao = new PhoneDao();
-		
-		PersonVo personVo = phoneDao.getPerson(id);
+	public String updateForm(Model model, @RequestParam("personId") int person_id) {
+		System.out.println("updateForm");
+
+		PersonVo personVo = phoneDao.getPerson(person_id);
 		
 		model.addAttribute("personVo", personVo);
+		
+		return "updateForm";
+	}
+	
+	// 수정폼2
+	@RequestMapping(value = "/updateForm2", method = { RequestMethod.GET, RequestMethod.POST })
+	public String updateForm2(Model model, @RequestParam("personId") int person_id) {
+		System.out.println("updateForm2");
 
-		return "/WEB-INF/views/updateForm.jsp";
+		Map<String, Object> personMap = phoneDao.getPerson2(person_id);
+		
+		model.addAttribute("pMap", personMap);
+		
+		return "updateForm2";
 	}
 
-//수정
+//	// 수정
 //	@RequestMapping(value = "/update", method = { RequestMethod.GET, RequestMethod.POST })
 //	public String update(@RequestParam("name") String name,
 //					   	 @RequestParam("hp") String hp,
@@ -124,38 +108,25 @@ public class PhoneController {
 //			             @RequestParam("personId") String id) {
 //		System.out.println("수정");
 //		
-//		PhoneDao phoneDao = new PhoneDao();
-//		
 //		PersonVo personVo = new PersonVo(name, hp, company, id);
 //		
 //		phoneDao.personUpdate(personVo);
 //
 //		return "redirect:/pb/list";
 //	}
-	
-	@RequestMapping(value = "/update", method = { RequestMethod.GET, RequestMethod.POST })
-	public String update(@ModelAttribute PersonVo personVo, @RequestParam("id") int id) {
-		System.out.println("수정");
-		
-//		PhoneDao phoneDao = new PhoneDao();
-		
-		System.out.println(personVo);
-		personVo.setPersonId(id);
-		phoneDao.personUpdate(personVo);
+//	
+//	@RequestMapping(value = "/update", method = { RequestMethod.GET, RequestMethod.POST })
+//	public String update(@ModelAttribute PersonVo personVo, @RequestParam("id") int id) {
+//		System.out.println("수정");
+//		
+////		PhoneDao phoneDao = new PhoneDao();
+//		
+//		System.out.println(personVo);
+//		personVo.setPersonId(id);
+//		phoneDao.personUpdate(personVo);
+//
+//		return "redirect:/pb/list";
+//	}
+//
 
-		return "redirect:/pb/list";
-	}
-
-//삭제
-	@RequestMapping(value = "/delete", method = { RequestMethod.GET, RequestMethod.POST })
-	public String delete(@RequestParam("personId") int id) {
-		System.out.println("삭제");
-		
-//		PhoneDao phoneDao = new PhoneDao();
-		
-		phoneDao.personDelete(id);
-		
-		return "redirect:/pb/list";
-
-	}
 }

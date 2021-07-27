@@ -13,10 +13,10 @@
 	</p>
 
 	<form action="/phonebook3/update" method="post">
-		 이름: <input type="text" name="name" value="${personVo.name }"> <br> 
-		 핸드폰: <input type="text" name="hp" value="${personVo.hp }"> <br> 
-		 회사: <input type="text" name="company" value="${personVo.company }"> <br> 
-		 <input type="hidden" name="id" value="${personVo.personId }"> <br>
+		 이름: <input type="text" name="name" value="${pMap.NAME }"> <br> 
+		 핸드폰: <input type="text" name="hp" value="${pMap.HP }"> <br> 
+		 회사: <input type="text" name="company" value="${pMap.COMPANY }"> <br> 
+		 <input type="hidden" name="id" value="${pMap.PERSON_ID }"> <br>
 
 		<button type="submit">수정</button>
 	</form>
